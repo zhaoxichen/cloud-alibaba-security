@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.galen.micro.sys.mapper.SysRoleMapper">
+
+    <sql id="Base_Column_List">
+        id, name_en, name_cn,group_type,on_alone
+    </sql>
+
+    <select id="selectByRoleName" resultType="com.galen.micro.sys.model.SysRole" parameterType="java.lang.String">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_role
+        where name_en = #{nameEn,jdbcType=VARCHAR}
+        limit 1
+    </select>
+
+    <select id="getAllSysRoleList" resultType="com.galen.micro.sys.model.SysRole" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_role
+        where group_type = #{groupType}
+        order by id
+        limit 1000
+    </select>
+
+    <select id="getSysRoleList" resultType="com.galen.micro.sys.model.SysRole" parameterType="java.lang.Integer">
+        select
+        <include refid="Base_Column_List"/>
+        from sys_role
+        where group_type = #{groupType}
+        and on_alone = 0
+        order by id
+        limit 1000
+    </select>
+
+    <select id="getUserSysRoleList" resultType="com.galen.micro.sys.model.SysRole" parameterType="java.lang.Long">
+        SELECT
+        r.id, r.name_en, r.name_cn,r.group_type,r.on_alone
+        FROM
+        sys_role r
+        LEFT JOIN sys_user_role u_r ON r.id = u_r.role_id
+        WHERE
+        u_r.user_id = #{userId}
+        ORDER BY
+        r.id
+    </select>
+
+    <select id="getUserSysRoleIdList" resultType="java.lang.Long" parameterType="java.lang.Long">
+        SELECT
+            r.id
+        FROM
+            sys_role r
+            LEFT JOIN sys_user_role u_r ON r.id = u_r.role_id
+        WHERE
+            u_r.user_id = #{userId}
+        ORDER BY
+            r.id
+    </select>
+
+    <select id="searchRolesByGroupType" resultType="java.util.Map">
+        SELECT
+          sr.id,
+          sr.name_en    AS nameEn,
+          sr.name_cn    AS nameCn,
+          sr.group_type AS groupType,
+          sr.on_alone   AS onAlone
+        FROM sys_role AS sr
+        WHERE sr.group_type = #{groupType,jdbcType=INTEGER}
+    </select>
+</mapper>

@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: service-sys
+  profiles:
+    active: dev #默认dev 的命名空间
+  cloud:
+    nacos:
+      discovery:
+        server-addr: 127.0.0.1:8848
+      config:
+        server-addr: 127.0.0.1:8848
+        file-extension: yaml
+        ext-config[0]:
+          data-id: services-db-default.yaml #数据库
+        ext-config[1]:
+          data-id: services-cache.yaml
+        ext-config[2]:
+          data-id: services-common.yaml #服务共享配置文件
+---
+spring:
+  profiles: dev
+  cloud:
+    nacos:
+      config:
+        namespace: f9d7852c-4965-446a-9d26-86617ed7a93e

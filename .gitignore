@@ -1,0 +1,14 @@
+# Project exclude paths
+/micro-cloud/config-active-server/target/
+/micro-cloud/eureka-server/target/
+/micro-cloud/service-sso/target/
+/micro-cloud/service-sys/target/
+/micro-cloud/service-user/target/
+/micro-cloud/zuul-api/target/
+/micro-common/galen-model/target/
+/micro-common/galen-utils/target/
+/micro-common/security-model/target/
+/.idea/*
+/**/*.iml
+/.idea/
+/bean-scheme/target/

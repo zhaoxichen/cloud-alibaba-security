@@ -1,0 +1,18 @@
+server:
+  port: 8099
+spring:
+  # redis 缓存
+  redis:
+    database: 0
+    host: 127.0.0.1
+    password:
+    port: 6379
+    maxTotal: 200
+    timeout: 0
+    lettuce:
+      pool:
+        max-active: 8
+        min-idle: 0
+        max-idle: 8
+        max-wait: 10000
+

@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.galen.micro.sys.mapper.UserSecurityMapper">
+    <!--获取用户拥有的菜单-->
+    <resultMap id="MenuResultMap" type="com.galen.security.pojo.SecuritySysMenu">
+        <id column="id" property="id" jdbcType="BIGINT"/>
+        <result column="url" property="requestUrl" jdbcType="VARCHAR"/>
+        <result column="path" property="path" jdbcType="VARCHAR"/>
+        <result column="component" property="component" javaType="java.lang.Object"/>
+        <result column="title" property="title" jdbcType="VARCHAR"/>
+        <result column="title_en" property="titleEn" jdbcType="VARCHAR"/>
+        <result column="icon_pic" property="iconPic" jdbcType="VARCHAR"/>
+        <result column="parent_id" property="parentId" jdbcType="BIGINT"/>
+        <result column="request_url" property="requestUrl" jdbcType="VARCHAR"/>
+        <result column="sort_order" property="sortOrder" jdbcType="INTEGER"/>
+        <collection property="children" ofType="com.galen.security.pojo.SecuritySysMenu">
+            <id column="id2" property="id"/>
+            <result column="path2" property="path" jdbcType="VARCHAR"/>
+            <result column="component2" property="component" jdbcType="VARCHAR"/>
+            <result column="title2" property="title" jdbcType="VARCHAR"/>
+            <result column="title_en2" property="titleEn" jdbcType="VARCHAR"/>
+            <result column="icon_pic2" property="iconPic" jdbcType="VARCHAR"/>
+            <result column="parent_id2" property="parentId" jdbcType="BIGINT"/>
+            <result column="request_url2" property="requestUrl" jdbcType="VARCHAR"/>
+            <result column="sort_order2" property="sortOrder" jdbcType="INTEGER"/>
+            <collection property="children" ofType="com.galen.security.pojo.SecuritySysMenu">
+                <id column="id3" property="id"/>
+                <result column="title3" property="title" jdbcType="VARCHAR"/>
+            </collection>
+        </collection>
+    </resultMap>
+
+    <sql id="User_Menu_Column_List">
+        m1.id,m1.path,m1.component,m1.icon_pic,m1.title,m1.title_en,m1.parent_id,m1.request_url,m1.sort_order,
+        m2.id as id2,m2.path as path2,m2.component as component2,m2.icon_pic as icon_pic2,m2.title as title2,
+        m2.title_en as title_en2,m2.parent_id as parent_id2,m2.request_url as request_url2,m2.sort_order as sort_order2
+    </sql>
+    <select id="getMenuByUid" parameterType="java.lang.Long" resultMap="MenuResultMap">
+        select
+        <include refid="User_Menu_Column_List"/>
+        from sys_menu m1,sys_menu m2
+        where m1.enabled=true
+        and m2.enabled=true
+        and m1.menu_type=1
+        and m2.menu_type=1
+        and m1.id=m2.parent_id
+        and m2.id in
+        (select mr.menu_id from sys_user_role u_r,sys_menu_role mr where u_r.role_id=mr.role_id and
+        u_r.user_id=#{userId})
+        order by m1.sort_order,m2.sort_order
+    </select>
+    <!--获取当前用户的当前菜单页面的按钮元素id-->
+    <select id="getButtonElementIdByUid" parameterType="java.lang.Long" resultType="java.lang.String">
+        select
+        element_id
+        from sys_menu m
+        where m.menu_type=2
+        and m.parent_id = #{menuId}
+        and m.id in
+        (select mr.menu_id from sys_user_role u_r,sys_menu_role mr where u_r.role_id=mr.role_id and
+        u_r.user_id=#{userId})
+        order by m.sort_order
+    </select>
+</mapper>
